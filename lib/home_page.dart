@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:twtform_flutter/new_paper_page.dart';
 
 class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.person),
@@ -27,6 +29,59 @@ class HomePage extends StatelessWidget {
               contentPadding: EdgeInsets.fromLTRB(22, 27, 22, 27),
               leading: Image.asset('images/new.png'),
               title: Text('新建'),
+              onTap: () {
+                showModalBottomSheet(
+                    context: context,
+                    builder: (context) {
+                      return Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          ListTile(
+                            title: Text('问卷'),
+                            trailing: Icon(Icons.keyboard_arrow_right),
+                            onTap: () {
+                              Navigator.pop(context);
+                              Navigator.pushNamed(
+                                context,
+                                '/new_paper_page',
+                                arguments: NewPaperArgs(
+                                  0,
+                                ),
+                              );
+                            },
+                          ),
+                          ListTile(
+                            title: Text('答题'),
+                            trailing: Icon(Icons.keyboard_arrow_right),
+                            onTap: () {
+                              Navigator.pop(context);
+                              Navigator.pushNamed(
+                                context,
+                                '/new_paper_page',
+                                arguments: NewPaperArgs(
+                                  1,
+                                ),
+                              );
+                            },
+                          ),
+                          ListTile(
+                            title: Text('投票'),
+                            trailing: Icon(Icons.keyboard_arrow_right),
+                            onTap: () {
+                              Navigator.pop(context);
+                              Navigator.pushNamed(
+                                context,
+                                '/new_paper_page',
+                                arguments: NewPaperArgs(
+                                  2,
+                                ),
+                              );
+                            },
+                          )
+                        ],
+                      );
+                    });
+              },
             ),
           ),
           Card(
