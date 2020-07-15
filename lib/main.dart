@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:twtform_flutter/new_paper_page.dart';
 import 'package:twtform_flutter/paper_editor_page.dart';
+import 'package:twtform_flutter/question_editor/single_editor_page.dart';
+import 'package:twtform_flutter/question_type_page.dart';
 
 import 'home_page.dart';
 
@@ -18,6 +20,8 @@ class TWTFormApp extends StatelessWidget {
         '/home_page': (context) => HomePage(),
         '/new_paper_page': (context) => NewPaperPage(),
         '/paper_editor_page': (context) => PaperEditorPage(),
+        '/question_type_page': (context) => QuestionTypePage(),
+        '/single_editor_page': (context) => SingleEditorPage(),
       },
       theme: ThemeData(
         brightness: Brightness.light,
