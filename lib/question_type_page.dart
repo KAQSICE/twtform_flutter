@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:twtform_flutter/bean.dart';
+import 'package:twtform_flutter/question_editor/single_editor_page.dart';
 
 class QuestionTypePage extends StatelessWidget {
   @override
@@ -23,7 +25,18 @@ class QuestionTypePage extends StatelessWidget {
             child: InkWell(
               onTap: () {
                 Navigator.pop(context);
-                Navigator.pushNamed(context, '/single_editor_page');
+                Navigator.pushNamed(
+                  context,
+                  '/single_editor_page',
+                  arguments: SingleEditorArgs(
+                    Single(
+                      title: '',
+                      options: <String>['', '', ''],
+                      necessary: false,
+                      score: 0,
+                    ),
+                  ),
+                );
               },
               child: Container(
                 padding: EdgeInsets.fromLTRB(0, 17, 0, 17),

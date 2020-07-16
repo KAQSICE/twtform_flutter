@@ -41,7 +41,7 @@ class PaperQuestion {
 //TODO:sign和signed部分还没有做
 class Single {
   String title; //question
-  int necessary; //necessary
+  bool necessary; //necessary
   int score; //score
   List<String> options; //options
   int correctAnswer; //right_answer
