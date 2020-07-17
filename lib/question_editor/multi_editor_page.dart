@@ -3,23 +3,23 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:twtform_flutter/bean.dart';
 
-class SingleEditorPage extends StatefulWidget {
+class MultiEditorPage extends StatefulWidget {
   @override
   State createState() {
-    return _SingleEditorState();
+    return _MultiEditorState();
   }
 }
 
-class SingleEditorArgs {
-  final Single single;
+class MultiEditorArgs {
+  final Multi multi;
 
-  SingleEditorArgs(this.single);
+  MultiEditorArgs(this.multi);
 }
 
-class _SingleEditorState extends State {
+class _MultiEditorState extends State {
   @override
   Widget build(BuildContext context) {
-    final SingleEditorArgs args = ModalRoute.of(context).settings.arguments;
+    final MultiEditorArgs args = ModalRoute.of(context).settings.arguments;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -29,7 +29,7 @@ class _SingleEditorState extends State {
             Navigator.pop(context);
           },
         ),
-        title: Text('编辑单选题'),
+        title: Text('编辑多选题'),
         centerTitle: true,
       ),
       body: Column(
@@ -63,7 +63,7 @@ class _SingleEditorState extends State {
                   contentPadding: EdgeInsets.fromLTRB(27, 0, 27, 10),
                   title: TextField(
                     onChanged: (text) {
-                      args.single.title = text;
+                      args.multi.title = text;
                     },
                     decoration: InputDecoration(
                       contentPadding: EdgeInsets.all(5),
@@ -75,17 +75,17 @@ class _SingleEditorState extends State {
                 ListView.builder(
                   shrinkWrap: true,
                   physics: NeverScrollableScrollPhysics(),
-                  itemCount: args.single.options.length,
+                  itemCount: args.multi.options.length,
                   itemBuilder: (context, index) {
                     return ListTile(
                       contentPadding: EdgeInsets.fromLTRB(27, 0, 27, 10),
                       title: Align(
                         child: TextField(
                           controller: TextEditingController()
-                            ..text = args.single.options.elementAt(index),
+                            ..text = args.multi.options.elementAt(index),
                           onChanged: (text) {
-                            args.single.options.removeAt(index);
-                            args.single.options.insert(index, text);
+                            args.multi.options.removeAt(index);
+                            args.multi.options.insert(index, text);
                           },
                           decoration: InputDecoration(
                             contentPadding: EdgeInsets.all(5),
@@ -98,14 +98,14 @@ class _SingleEditorState extends State {
                         icon: Icon(Icons.delete),
                         onPressed: () {
                           setState(() {
-                            if (args.single.options.length <= 1) {
+                            if (args.multi.options.length <= 1) {
                               FlutterToast.showToast(
                                 msg: '至少要有一个选项哦',
                                 textColor: Colors.white,
                                 backgroundColor: Colors.red,
                               );
                             } else {
-                              args.single.options.removeAt(index);
+                              args.multi.options.removeAt(index);
                             }
                           });
                         },
@@ -124,7 +124,7 @@ class _SingleEditorState extends State {
                         padding: EdgeInsets.fromLTRB(27, 11, 27, 11),
                         onPressed: () {
                           setState(() {
-                            args.single.options.add('');
+                            args.multi.options.add('');
                           });
                         },
                         icon: Icon(Icons.add_circle),
@@ -151,10 +151,10 @@ class _SingleEditorState extends State {
                 SwitchListTile(
                   contentPadding: EdgeInsets.fromLTRB(27, 0, 27, 10),
                   title: Text('是否必答'),
-                  value: args.single.necessary,
+                  value: args.multi.necessary,
                   onChanged: (value) {
                     setState(() {
-                      args.single.necessary = value;
+                      args.multi.necessary = value;
                     });
                   },
                 ),
@@ -174,20 +174,20 @@ class _SingleEditorState extends State {
                                   title: Text('不设置答案'),
                                   onTap: () {
                                     setState(() {
-                                      args.single.correctAnswer = null;
+                                      args.multi.correctAnswer = null;
                                     });
                                     Navigator.pop(context);
                                   },
                                 ),
                                 ListView.builder(
                                     shrinkWrap: true,
-                                    itemCount: args.single.options.length,
+                                    itemCount: args.multi.options.length,
                                     itemBuilder: (context, index) {
                                       return ListTile(
                                         title: Text('选项${index + 1}'),
                                         onTap: () {
                                           setState(() {
-                                            args.single.correctAnswer = index;
+                                            args.multi.correctAnswer = [index];
                                           });
                                           Navigator.pop(context);
                                         },
@@ -203,9 +203,9 @@ class _SingleEditorState extends State {
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
                         Text(
-                          args.single.correctAnswer == null
+                          args.multi.correctAnswer == null
                               ? '未设置'
-                              : '选项${args.single.correctAnswer + 1}',
+                              : '选项${args.multi.correctAnswer}',
                         ),
                         Icon(Icons.keyboard_arrow_right),
                       ],
@@ -219,9 +219,9 @@ class _SingleEditorState extends State {
                     size: Size.fromWidth(50),
                     child: TextField(
                       controller: TextEditingController()
-                        ..text = args.single.score.toString(),
+                        ..text = args.multi.score.toString(),
                       onChanged: (text) {
-                        args.single.score = text == '' ? 0 : int.parse(text);
+                        args.multi.score = text == '' ? 0 : int.parse(text);
                       },
                       inputFormatters: [
                         WhitelistingTextInputFormatter.digitsOnly
@@ -240,7 +240,7 @@ class _SingleEditorState extends State {
                 height: 50,
                 child: FlatButton(
                   onPressed: () {
-                    if (args.single.title == '') {
+                    if (args.multi.title == '') {
                       FlutterToast.showToast(
                         msg: '题干不能为空',
                         backgroundColor: Colors.red,
@@ -248,11 +248,11 @@ class _SingleEditorState extends State {
                       );
                     } else {
                       bool submitState = true;
-                      for (String option in args.single.options) {
+                      for (String option in args.multi.options) {
                         submitState = option != '';
                       }
                       if (submitState) {
-                        Navigator.pop(context, args.single);
+                        Navigator.pop(context, args.multi);
                       } else {
                         FlutterToast.showToast(
                           msg: '选项不能为空',

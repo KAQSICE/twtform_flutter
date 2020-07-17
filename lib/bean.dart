@@ -56,7 +56,7 @@ class Single {
 
 class Multi {
   String title; //question
-  int necessary; //necessary
+  bool necessary; //necessary
   int score; //score
   List<String> options; //options
   List<int> correctAnswer; //right_answer

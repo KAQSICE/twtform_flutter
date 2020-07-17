@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:twtform_flutter/bean.dart';
+import 'package:twtform_flutter/question_editor/multi_editor_page.dart';
 import 'package:twtform_flutter/question_editor/single_editor_page.dart';
 
 class QuestionTypePage extends StatelessWidget {
@@ -23,9 +24,8 @@ class QuestionTypePage extends StatelessWidget {
           Card(
             margin: EdgeInsets.fromLTRB(24, 20, 24, 5),
             child: InkWell(
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.pushNamed(
+              onTap: () async {
+                final result = await Navigator.pushNamed(
                   context,
                   '/single_editor_page',
                   arguments: SingleEditorArgs(
@@ -37,6 +37,7 @@ class QuestionTypePage extends StatelessWidget {
                     ),
                   ),
                 );
+                Navigator.pop(context, result);
               },
               child: Container(
                 padding: EdgeInsets.fromLTRB(0, 17, 0, 17),
@@ -48,7 +49,21 @@ class QuestionTypePage extends StatelessWidget {
           Card(
             margin: EdgeInsets.fromLTRB(24, 5, 24, 5),
             child: InkWell(
-              onTap: () {},
+              onTap: () async {
+                final result = await Navigator.pushNamed(
+                  context,
+                  '/multi_editor_page',
+                  arguments: MultiEditorArgs(
+                    Multi(
+                      title: '',
+                      options: <String>['', '', ''],
+                      necessary: false,
+                      score: 0,
+                    ),
+                  ),
+                );
+                //TODO:这里还没做完
+              },
               child: Container(
                 padding: EdgeInsets.fromLTRB(0, 17, 0, 17),
                 alignment: Alignment.center,

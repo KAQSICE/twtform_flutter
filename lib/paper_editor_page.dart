@@ -20,6 +20,8 @@ class PaperEditorArgs {
 }
 
 class _PaperEditorState extends State {
+  List<int> singleGroupValue = [];
+
   @override
   Widget build(BuildContext context) {
     final PaperEditorArgs args = ModalRoute.of(context).settings.arguments;
@@ -37,60 +39,117 @@ class _PaperEditorState extends State {
       ),
       body: Column(
         children: <Widget>[
-          ListView(
-            shrinkWrap: true,
-            children: <Widget>[
-              Card(
-                margin: EdgeInsets.fromLTRB(24, 10, 24, 10),
-                child: ListTile(
-                  title: Text(args.paper.title),
-                  subtitle: Text(args.paper.description == null
-                      ? '这个${paperTypeName.elementAt(args.paper.type)}还没有说明哟'
-                      : args.paper.description),
-                ),
-              ),
-              //TODO:这里动态添加题目Card
-              Container(
-                margin: EdgeInsets.fromLTRB(84, 5, 84, 5),
-                child: RaisedButton.icon(
-                  color: Colors.lightBlueAccent,
-                  icon: Icon(Icons.add_circle),
-                  label: Text('添加题目'),
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/question_type_page');
-                  },
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.fromLTRB(84, 5, 84, 5),
-                child: RaisedButton(
-                  color: Colors.lightBlueAccent,
-                  child: Text('预览'),
-                  onPressed: () {
-                    FlutterToast.showToast(
-                      msg: '这里还没做',
-                      backgroundColor: Colors.red,
-                      textColor: Colors.white,
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
           Expanded(
-            child: Align(
-              alignment: Alignment.bottomCenter,
-              child: SizedBox(
-                  width: double.infinity,
-                  height: 50,
-                  child: FlatButton(
-                    onPressed: () {
-                      //TODO:提交问卷
-                    },
-                    child: Text('完成'),
+            child: ListView(
+              shrinkWrap: true,
+              children: <Widget>[
+                Card(
+                  margin: EdgeInsets.fromLTRB(24, 10, 24, 10),
+                  child: ListTile(
+                    title: Text(args.paper.title),
+                    subtitle: Text(args.paper.description == null
+                        ? '这个${paperTypeName.elementAt(args.paper.type)}还没有说明哟'
+                        : args.paper.description),
+                  ),
+                ),
+                if (args.paper.questions.single != null)
+                  {
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount: args.paper.questions.single.length,
+                      itemBuilder: (context, index) {
+                        return Card(
+                          margin: EdgeInsets.fromLTRB(24, 10, 24, 10),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              ListTile(
+                                title: Text(
+                                    '${index + 1}.${args.paper.questions.single
+                                        .elementAt(index)
+                                        .title}'),
+                              ),
+                              ListView.builder(
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
+                                itemCount: args.paper.questions.single
+                                    .elementAt(index)
+                                    .options
+                                    .length,
+                                itemBuilder: (context, optionIndex) {
+                                  return RadioListTile(
+                                    activeColor: Colors.lightBlueAccent,
+                                    value: optionIndex,
+                                    groupValue: singleGroupValue.elementAt(
+                                        index),
+                                    onChanged: (value) {
+                                      setState(() {
+                                        singleGroupValue.removeAt(index);
+                                        singleGroupValue.insert(index, value);
+                                      });
+                                    },
+                                    title: Text(args.paper.questions.single
+                                        .elementAt(index)
+                                        .options
+                                        .elementAt(optionIndex)),
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  }.elementAt(0),
+                //TODO:这里动态添加题目Card
+                Container(
+                  margin: EdgeInsets.fromLTRB(84, 5, 84, 5),
+                  child: RaisedButton.icon(
                     color: Colors.lightBlueAccent,
-                  )),
+                    icon: Icon(Icons.add_circle),
+                    label: Text('添加题目'),
+                    onPressed: () async {
+                      final result = await Navigator.pushNamed(
+                          context, '/question_type_page');
+                      if (result != null) {
+                        setState(() {
+                          args.paper.questions.single.add(result);
+                          singleGroupValue.add(0);
+                        });
+                      }
+                    },
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.fromLTRB(84, 5, 84, 5),
+                  child: RaisedButton(
+                    color: Colors.lightBlueAccent,
+                    child: Text('预览'),
+                    onPressed: () {
+                      FlutterToast.showToast(
+                        msg: '这里还没做',
+                        backgroundColor: Colors.red,
+                        textColor: Colors.white,
+                      );
+                    },
+                  ),
+                ),
+              ],
             ),
+          ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: FlatButton(
+                  onPressed: () {
+                    //TODO:提交问卷
+                  },
+                  child: Text('完成'),
+                  color: Colors.lightBlueAccent,
+                )),
           ),
         ],
       ),

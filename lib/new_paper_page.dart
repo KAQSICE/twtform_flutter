@@ -176,11 +176,15 @@ class _NewPaperState extends State {
                         0,
                         Paper(
                           title: title,
-                          description: description,
-                          type: args.paperType,
-                          startTime: startDate,
-                          endTime: endDate,
-                        ),
+                            description: description,
+                            type: args.paperType,
+                            startTime: startDate,
+                            endTime: endDate,
+                            questions: PaperQuestion(
+                              single: <Single>[],
+                              multi: <Multi>[],
+                              blank: <Blank>[],
+                            )),
                       ),
                     );
                   }
