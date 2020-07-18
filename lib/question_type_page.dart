@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:twtform_flutter/bean.dart';
+import 'package:twtform_flutter/question_editor/blank_editor_page.dart';
 import 'package:twtform_flutter/question_editor/multi_editor_page.dart';
 import 'package:twtform_flutter/question_editor/single_editor_page.dart';
 
@@ -62,6 +63,7 @@ class QuestionTypePage extends StatelessWidget {
                     ),
                   ),
                 );
+                Navigator.pop(context, result);
                 //TODO:这里还没做完
               },
               child: Container(
@@ -74,7 +76,21 @@ class QuestionTypePage extends StatelessWidget {
           Card(
             margin: EdgeInsets.fromLTRB(24, 5, 24, 5),
             child: InkWell(
-              onTap: () {},
+              onTap: () async {
+                final result = await Navigator.pushNamed(
+                  context,
+                  '/blank_editor_page',
+                  arguments: BlankEditorArgs(
+                    Blank(
+                      title: '',
+                      necessary: false,
+                      score: 0,
+                      correctAnswer: '',
+                    ),
+                  ),
+                );
+                Navigator.pop(context, result);
+              },
               child: Container(
                 padding: EdgeInsets.fromLTRB(0, 17, 0, 17),
                 alignment: Alignment.center,

@@ -71,7 +71,7 @@ class Multi {
 
 class Blank {
   String title; //question
-  int necessary; //necessary
+  bool necessary; //necessary
   int score; //score
   String correctAnswer; //right_answer
   Blank({

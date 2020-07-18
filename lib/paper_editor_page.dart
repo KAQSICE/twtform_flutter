@@ -21,6 +21,7 @@ class PaperEditorArgs {
 
 class _PaperEditorState extends State {
   List<int> singleGroupValue = [];
+  var multiValue = List();
 
   @override
   Widget build(BuildContext context) {
@@ -52,56 +53,98 @@ class _PaperEditorState extends State {
                         : args.paper.description),
                   ),
                 ),
-                if (args.paper.questions.single != null)
-                  {
-                    ListView.builder(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemCount: args.paper.questions.single.length,
-                      itemBuilder: (context, index) {
-                        return Card(
-                          margin: EdgeInsets.fromLTRB(24, 10, 24, 10),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              ListTile(
-                                title: Text(
-                                    '${index + 1}.${args.paper.questions.single
-                                        .elementAt(index)
-                                        .title}'),
-                              ),
-                              ListView.builder(
-                                shrinkWrap: true,
-                                physics: NeverScrollableScrollPhysics(),
-                                itemCount: args.paper.questions.single
+                ListView.builder(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: args.paper.questions.single.length,
+                  itemBuilder: (context, index) {
+                    return Card(
+                      margin: EdgeInsets.fromLTRB(24, 10, 24, 10),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          ListTile(
+                            title: Text(
+                                '${index + 1}.${args.paper.questions.single
+                                    .elementAt(index)
+                                    .title}'),
+                          ),
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount: args.paper.questions.single
+                                .elementAt(index)
+                                .options
+                                .length,
+                            itemBuilder: (context, optionIndex) {
+                              return RadioListTile(
+                                activeColor: Colors.lightBlueAccent,
+                                value: optionIndex,
+                                groupValue: singleGroupValue.elementAt(index),
+                                onChanged: (value) {
+                                  setState(() {
+                                    singleGroupValue.removeAt(index);
+                                    singleGroupValue.insert(index, value);
+                                  });
+                                },
+                                title: Text(args.paper.questions.single
                                     .elementAt(index)
                                     .options
-                                    .length,
-                                itemBuilder: (context, optionIndex) {
-                                  return RadioListTile(
-                                    activeColor: Colors.lightBlueAccent,
-                                    value: optionIndex,
-                                    groupValue: singleGroupValue.elementAt(
-                                        index),
-                                    onChanged: (value) {
-                                      setState(() {
-                                        singleGroupValue.removeAt(index);
-                                        singleGroupValue.insert(index, value);
-                                      });
-                                    },
-                                    title: Text(args.paper.questions.single
-                                        .elementAt(index)
-                                        .options
-                                        .elementAt(optionIndex)),
-                                  );
-                                },
-                              ),
-                            ],
+                                    .elementAt(optionIndex)),
+                              );
+                            },
                           ),
-                        );
-                      },
-                    ),
-                  }.elementAt(0),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+                ListView.builder(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: args.paper.questions.multi.length,
+                  itemBuilder: (context, index) {
+                    return Card(
+                      margin: EdgeInsets.fromLTRB(24, 10, 24, 10),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          ListTile(
+                            title: Text(
+                                '${args.paper.questions.single.length + index +
+                                    1}.${args.paper.questions.multi
+                                    .elementAt(index)
+                                    .title}'),
+                          ),
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount: args.paper.questions.multi
+                                .elementAt(index)
+                                .options
+                                .length,
+                            itemBuilder: (context, optionIndex) {
+                              List temp = multiValue.elementAt(index);
+                              return CheckboxListTile(
+                                controlAffinity: ListTileControlAffinity
+                                    .leading,
+                                value: temp.elementAt(optionIndex),
+                                onChanged: (value) {
+                                  setState(() {
+                                    temp.removeAt(optionIndex);
+                                    temp.insert(optionIndex, value);
+                                    multiValue.removeAt(index);
+                                    multiValue.insert(index, temp);
+                                  });
+                                },
+                              );
+                            },
+                          )
+                        ],
+                      ),
+                    );
+                  },
+                ),
                 //TODO:这里动态添加题目Card
                 Container(
                   margin: EdgeInsets.fromLTRB(84, 5, 84, 5),
@@ -114,8 +157,17 @@ class _PaperEditorState extends State {
                           context, '/question_type_page');
                       if (result != null) {
                         setState(() {
-                          args.paper.questions.single.add(result);
-                          singleGroupValue.add(0);
+                          if (result is Single) {
+                            args.paper.questions.single.add(result);
+                            singleGroupValue.add(0);
+                          } else if (result is Multi) {
+                            args.paper.questions.multi.add(result);
+                            var temp = List();
+                            for (int i = 0; i < result.options.length; i++) {
+                              temp.add(false);
+                            }
+                            multiValue.add(temp);
+                          }
                         });
                       }
                     },
